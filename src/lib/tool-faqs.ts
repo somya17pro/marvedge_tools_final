@@ -70,7 +70,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Does the compressor strip private EXIF camera and GPS metadata?",
-      a: "Yes. When re-encoding via the browser canvas, hidden EXIF metadata—including GPS coordinates, camera serial numbers, and exposure parameters—is automatically stripped for privacy.",
+      a: "Yes. Re-encoding via the browser canvas strips hidden EXIF metadata, including GPS coordinates, camera serial numbers, and exposure parameters, for privacy.",
     },
     {
       q: "Does it preserve transparency for PNG files?",
@@ -195,7 +195,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Will compressing a GIF break its infinite loop playback?",
-      a: "No. The Netscape 2.0 application extension header is preserved intact, ensuring your compressed GIF continues to loop seamlessly everywhere.",
+      a: "No. The Netscape 2.0 application extension header stays intact, so your compressed GIF continues to loop across browsers and social feeds.",
     },
     {
       q: "Why are GIFs so much heavier than MP4 videos?",
@@ -265,7 +265,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
   "image-format-converter": [
     {
       q: "Which image format conversions are supported?",
-      a: "You can seamlessly convert between JPG, PNG, and WebP in any combination, with full support for single files or multi-file batches.",
+      a: "You can convert JPG, PNG, WebP, and static SVG files to PNG, JPG, or WebP in single uploads or multi-file batches.",
     },
     {
       q: "When should I convert PNG to WebP?",
@@ -500,7 +500,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Can I choose between an executive brief and detailed notes?",
-      a: "Yes. You can toggle between a 60-second TL;DR executive summary, a structured bullet-point breakdown, or a comprehensive chapter-by-chapter study guide.",
+      a: "Yes. Pick Short, Medium, or Detailed summary length, plus a Chapters breakdown whenever timestamps appear in your source transcript.",
     },
     {
       q: "Is my transcript data used to train public AI models?",
@@ -602,14 +602,14 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Can I use these titles for TikTok, Reels, or blog headlines?",
-      a: "Absolutely. The high-CTR psychological frameworks translate seamlessly to TikTok hooks, podcast titles, Substack subject lines, and LinkedIn openers.",
+      a: "Yes. Strong curiosity and how-to opening formulas translate directly to TikTok hooks, podcast titles, Substack subject lines, and LinkedIn openers.",
     },
   ],
 
   "content-repurposer": [
     {
       q: "How does the AI Content Repurposer work?",
-      a: "It ingests long-form content—such as blog articles, whitepapers, podcast transcripts, or product updates—and automatically deconstructs and refactors the insights into platform-native formats for LinkedIn, Twitter/X, and newsletters.",
+      a: "It takes long-form text, such as blog articles, release notes, or podcast transcripts, and converts the points into platform-ready drafts for LinkedIn, X/Twitter, Instagram, and email.",
     },
     {
       q: "Why shouldn't I just copy and paste the same text across platforms?",
@@ -664,7 +664,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Does it incorporate SEO keywords naturally?",
-      a: "Yes. You can input priority target search keywords, and the engine weaves them seamlessly into product headings and descriptions without awkward keyword stuffing.",
+      a: "Yes. Include key product terms inside your Key details input, and the generator weaves them naturally into the headline, description, and feature bullets without stuffing.",
     },
     {
       q: "What tone variants can I generate?",
@@ -688,7 +688,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "How does benefit-led copy increase conversion rates?",
-      a: "Customers don't buy features—they buy better versions of themselves. By clearly communicating how your product eliminates friction and saves time, benefit-led copy directly boosts checkout conversions.",
+      a: "Shoppers buy outcomes rather than raw specs. Showing clearly how your product solves a concrete problem or saves time improves page clarity and conversions.",
     },
   ],
 
@@ -723,7 +723,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Does it support mobile and tablet screenshots?",
-      a: "Yes. It seamlessly handles desktop web captures, macOS windows, Windows apps, and iOS/Android mobile screens.",
+      a: "Yes. It reads desktop web captures, macOS windows, Windows applications, and mobile screenshots up to 10 images per guide.",
     },
     {
       q: "Can I customize the heading and introductory overview?",
@@ -793,7 +793,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Can I customize the target duration of the demo?",
-      a: "Yes. You can generate a 30-second social media teaser, a 60-second website hero video, or a comprehensive 2-minute product deep-dive.",
+      a: "Yes. Choose 60 seconds, 2 minutes, or 3 minutes under Length to control pacing, scene count, and total spoken word count.",
     },
     {
       q: "How does the script optimize the opening 5 seconds to prevent viewer bounce?",

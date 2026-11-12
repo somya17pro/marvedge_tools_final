@@ -10,9 +10,14 @@ const errMsg = (e: unknown) => (e instanceof Error ? e.message : "Something went
 function Output({ text }: { text: string }) {
   if (!text) return null;
   return (
-    <div className="grid gap-3 rounded-2xl border bg-muted/50 p-5">
-      <div className="flex justify-between gap-2"><span className="flex items-center gap-2 font-display font-bold text-primary"><Sparkles className="h-4 w-4" /> Result</span><CopyBtn text={text} /></div>
-      <div className="whitespace-pre-wrap text-[15px] leading-relaxed">{text}</div>
+    <div aria-live="polite" className="grid gap-3 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-5">
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#537190]">
+          <Sparkles className="h-4 w-4" aria-hidden="true" /> Result
+        </span>
+        <CopyBtn text={text} />
+      </div>
+      <div className="whitespace-pre-wrap text-[15px] leading-relaxed text-[#000000]">{text}</div>
     </div>
   );
 }
@@ -92,9 +97,9 @@ export function AiTextTool({ slug }: { slug: string }) {
           </div>
         ))}
       </div>
-      <p className="text-xs text-muted-foreground">Example content is filled in so you can see it work — replace it with your own.</p>
+      <p className="text-xs text-[#4A4740]">Example content is filled in so you can see it work — replace it with your own.</p>
       <div className="flex flex-wrap gap-2">
-        <Btn busy={busy} disabled={!ready} onClick={go}><Sparkles className="h-4 w-4" />{busy ? "Thinking…" : cfg.cta}</Btn>
+        <Btn busy={busy} disabled={!ready} onClick={go}><Sparkles className="h-4 w-4" aria-hidden="true" />{busy ? "Thinking…" : cfg.cta}</Btn>
         <Btn variant="ghost" onClick={() => setVals(Object.fromEntries(cfg.fields.map((f) => [f.key, f.options?.[0] ?? ""])))}>Clear example</Btn>
       </div>
       <ErrorNote msg={err} />
@@ -132,19 +137,26 @@ export function ScreenshotGuide() {
       {shots.length > 0 && (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {shots.map((s, i) => (
-            <div key={i} className="relative grid gap-2 rounded-2xl border p-3">
-              <span className="absolute -left-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-primary text-sm font-bold text-primary-foreground">{i + 1}</span>
-              <button onClick={() => setShots(shots.filter((_, j) => j !== i))} className="absolute right-2 top-2 rounded-full bg-background p-1 shadow-soft"><X className="h-3 w-3" /></button>
-              <img src={s.url} alt="" className="h-32 w-full rounded-lg object-cover" />
-              <input className={inputCls} placeholder="Optional note: what happens here?" value={s.note} onChange={(e) => setShots(shots.map((x, j) => (j === i ? { ...x, note: e.target.value } : x)))} />
+            <div key={i} className="relative grid gap-2 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3">
+              <span className="absolute -left-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#000000] text-xs font-bold tabular-nums text-[#FFFFFF] shadow-sm">{i + 1}</span>
+              <button
+                type="button"
+                aria-label={`Remove screenshot ${i + 1}`}
+                onClick={() => setShots(shots.filter((_, j) => j !== i))}
+                className="absolute right-2 top-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#D6CCB5] bg-[#FFFFFF] text-[#000000] shadow-xs transition-colors hover:bg-[#E8DFCA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
+              >
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              <img src={s.url} alt={s.note || `Screenshot ${i + 1}`} className="h-32 w-full rounded-lg border border-[#D6CCB5] bg-[#FFFFFF] object-cover" />
+              <input className={inputCls.replace("bg-[#FAF7F0]", "bg-[#FFFFFF]")} placeholder="Optional note: what happens here?" value={s.note} onChange={(e) => setShots(shots.map((x, j) => (j === i ? { ...x, note: e.target.value } : x)))} />
             </div>
           ))}
         </div>
       )}
-      <div><Btn busy={busy} disabled={!shots.length} onClick={go}><Sparkles className="h-4 w-4" />{busy ? "Writing guide…" : "Generate guide"}</Btn></div>
+      <div><Btn busy={busy} disabled={!shots.length} onClick={go}><Sparkles className="h-4 w-4" aria-hidden="true" />{busy ? "Writing guide…" : "Generate guide"}</Btn></div>
       <ErrorNote msg={err} />
       <Output text={out} />
-      {out && <p className="text-xs text-muted-foreground">Always review AI-written steps before sharing.</p>}
+      {out && <p className="text-xs text-[#4A4740]">Always review AI-written steps before sharing.</p>}
     </Panel>
   );
 }
@@ -183,13 +195,13 @@ export function SubtitleGenerator() {
       {url && (isVideo ? <video src={url} controls className="max-h-72 rounded-2xl" /> : <audio src={url} controls className="w-full" />)}
       {cues.length > 0 && (
         <>
-          <p className="text-xs text-muted-foreground">Timings are estimated from the length of each line — nudge them below if needed.</p>
-          <div className="grid max-h-[480px] gap-2 overflow-y-auto pr-1">
+          <p className="text-xs text-[#4A4740]">Timings are estimated from the length of each line — nudge them below if needed.</p>
+          <div className="grid max-h-[480px] gap-2 overflow-y-auto overscroll-contain pr-1">
             {cues.map((c, i) => (
-              <div key={i} className="grid grid-cols-[70px_70px_1fr] gap-2">
-                <input className={inputCls} type="number" step={0.1} value={c.start.toFixed(1)} onChange={(e) => setCues(cues.map((x, j) => (j === i ? { ...x, start: +e.target.value } : x)))} />
-                <input className={inputCls} type="number" step={0.1} value={c.end.toFixed(1)} onChange={(e) => setCues(cues.map((x, j) => (j === i ? { ...x, end: +e.target.value } : x)))} />
-                <input className={inputCls} value={c.text} onChange={(e) => setCues(cues.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))} />
+              <div key={i} className="grid grid-cols-[76px_76px_1fr] gap-2">
+                <input aria-label={`Cue ${i + 1} start time`} className={`${inputCls} tabular-nums`} type="number" step={0.1} value={c.start.toFixed(1)} onChange={(e) => setCues(cues.map((x, j) => (j === i ? { ...x, start: +e.target.value } : x)))} />
+                <input aria-label={`Cue ${i + 1} end time`} className={`${inputCls} tabular-nums`} type="number" step={0.1} value={c.end.toFixed(1)} onChange={(e) => setCues(cues.map((x, j) => (j === i ? { ...x, end: +e.target.value } : x)))} />
+                <input aria-label={`Cue ${i + 1} text`} className={inputCls} value={c.text} onChange={(e) => setCues(cues.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))} />
               </div>
             ))}
           </div>
@@ -227,16 +239,27 @@ export function VoiceoverGenerator() {
       <Field label="Voice">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {VOICES.map(([v, d]) => (
-            <button key={v} onClick={() => setVoice(v ?? "Kore")} className={`rounded-2xl border p-3 text-left ${voice === v ? "border-primary bg-secondary" : "hover:bg-muted"}`}>
-              <p className="font-bold">{v}</p><p className="text-xs text-muted-foreground">{d}</p>
+            <button
+              key={v}
+              type="button"
+              aria-pressed={voice === v}
+              onClick={() => setVoice(v ?? "Kore")}
+              className={`cursor-pointer rounded-2xl border p-3.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                voice === v
+                  ? "border-[#000000] bg-[#E8DFCA]/60 text-[#000000]"
+                  : "border-[#D6CCB5] bg-[#FAF7F0] text-[#000000] hover:border-[#7895B2] hover:bg-[#FFFFFF]"
+              }`}
+            >
+              <p className="font-bold">{v}</p>
+              <p className="text-xs text-[#4A4740]">{d}</p>
             </button>
           ))}
         </div>
       </Field>
       <Field label="Delivery (optional)"><input className={inputCls} placeholder="warmly, with energy" value={style} onChange={(e) => setStyle(e.target.value)} /></Field>
-      <div><Btn busy={busy} disabled={!text.trim()} onClick={go}><Sparkles className="h-4 w-4" />{busy ? "Recording…" : "Generate voiceover"}</Btn></div>
+      <div><Btn busy={busy} disabled={!text.trim()} onClick={go}><Sparkles className="h-4 w-4" aria-hidden="true" />{busy ? "Recording…" : "Generate voiceover"}</Btn></div>
       <ErrorNote msg={err} />
-      {audio && <div className="flex flex-wrap items-center gap-3"><audio src={audio.url} controls autoPlay className="flex-1" /><DownloadBtn onClick={() => download(audio.blob, "voiceover.wav")} /></div>}
+      {audio && <div aria-live="polite" className="flex flex-wrap items-center gap-3 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4"><audio src={audio.url} controls autoPlay className="flex-1" /><DownloadBtn onClick={() => download(audio.blob, "voiceover.wav")} /></div>}
     </Panel>
   );
 }

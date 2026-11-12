@@ -1,0 +1,28 @@
+# Marvedge Tools
+
+> Nineteen free browser utilities and ephemeral AI media workflows by Marvedge (https://marvedge.com). Every client-side media, PDF, image, QR, and video utility processes files directly inside the visitor's browser without server file uploads or watermarks.
+
+## Free Browser Utilities
+
+- [MP4 to GIF](https://marvedge.com/mp4-to-gif): Convert MP4, MOV, and WebM recordings up to 20 seconds into looping GIFs (160-960px, 5-25 fps, 16-256 colors) in the browser.
+- [Image Compressor](https://marvedge.com/image-compressor): Batch compress JPG, PNG, and WebP images to WebP or JPG at 10-95% quality on the user's device.
+- [QR Code Generator](https://marvedge.com/qr-code-generator): Build static QR codes for URLs, Wi-Fi, vCards, email, and phones with custom shapes, center logo (Level H), SVG/PNG download, and A4-Letter print sheets.
+- [Video Compressor](https://marvedge.com/video-compressor): Re-encode videos locally at 360p to 1080p resolution and 0.3 to 6 Mbps bitrate with audio kept intact.
+- [GIF Compressor](https://marvedge.com/gif-compressor): Shrink animated GIFs via delta-pixel transparency, 20-100% scale, frame skipping, and 16-256 color quantization.
+- [Image Resizer](https://marvedge.com/image-resizer): Resize photos to exact pixel sizes or strict KB targets (10-200+ KB) with built-in passport, visa, exam, signature, social, and ecommerce presets.
+- [Image Format Converter](https://marvedge.com/image-format-converter): Batch convert PNG, JPG, WebP, and SVG files between PNG, JPG, and WebP with single-click ZIP download.
+- [PDF Merger & Splitter](https://marvedge.com/pdf-merger): Reorder and merge multiple PDFs or extract exact page ranges (1-3, 5) locally using pdf-lib.
+- [Favicon Generator](https://marvedge.com/favicon-generator): Create 16, 32, 48, 180 (apple-touch-icon), 192, and 512px PNG favicons plus snippet.html inside a single ZIP archive.
+- [Video Aspect Ratio](https://marvedge.com/video-aspect-ratio): Reframe videos between 16:9, 9:16, 1:1, and 4:5 using blurred background padding, solid bars, or crop-to-fill.
+- [Link Shortener](https://marvedge.com/link-shortener): Mint clean /go/ short URLs with optional custom slugs (3-40 chars), password protection, expiration windows, and PNG QR codes.
+
+## AI Media & Content Tools
+
+- [Video Summarizer](https://marvedge.com/video-summarizer): Turn video transcripts up to 40,000 characters into a 2-sentence TL;DR, 5-8 key bullets, and verified chapters.
+- [Subtitle Generator](https://marvedge.com/subtitle-generator): Transcribe audio and video under 24 MB into editable timed captions with SRT and WebVTT export.
+- [YouTube Title Generator](https://marvedge.com/youtube-title-generator): Generate 8 titles under 70 characters, 3 opening hooks, a 150-250 word SEO description, and 15 tags.
+- [Content Repurposer](https://marvedge.com/content-repurposer): Convert longform blogs or transcripts into a LinkedIn post, 5-post X thread, Instagram caption, and newsletter draft.
+- [Product Description Generator](https://marvedge.com/product-description-generator): Generate ecommerce headlines, 80-150 word descriptions, 5 feature bullets, and 1-sentence hooks grounded strictly in provided facts.
+- [Screenshot to Guide](https://marvedge.com/screenshot-to-guide): Turn up to 10 ordered screenshots and notes into numbered how-to steps, tips, and an SOP summary.
+- [Voiceover Generator](https://marvedge.com/voiceover-generator): Synthesize scripts up to 4,000 characters across 6 neural voices (Kore, Puck, Charon, Aoede, Fenrir, Leda) with WAV export.
+- [Demo Script Generator](https://marvedge.com/demo-script-generator): Write structured 60-second to 3-minute product demo outlines, scene-by-scene action/narration scripts, and closing CTAs.

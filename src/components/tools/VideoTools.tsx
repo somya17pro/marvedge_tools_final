@@ -27,9 +27,12 @@ type Res = { blob: Blob; url: string; name: string };
 
 function ResultBox({ res, kind }: { res: Res; kind: "gif" | "video" }) {
   return (
-    <div className="grid gap-3 rounded-2xl border bg-muted/50 p-4">
-      {kind === "gif" ? <img src={res.url} alt="Result" className="max-h-80 rounded-lg" /> : <video src={res.url} controls className="max-h-80 rounded-lg" />}
-      <div className="flex flex-wrap items-center gap-3"><span className="font-display font-bold text-primary">{fmtBytes(res.blob.size)}</span><DownloadBtn onClick={() => download(res.blob, res.name)} /></div>
+    <div aria-live="polite" className="grid gap-3 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
+      {kind === "gif" ? <img src={res.url} alt="Converted GIF preview" className="max-h-80 rounded-lg border border-[#D6CCB5]" /> : <video src={res.url} controls className="max-h-80 rounded-lg bg-[#000000]" />}
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="text-sm font-semibold tabular-nums text-[#000000]">{fmtBytes(res.blob.size)}</span>
+        <DownloadBtn onClick={() => download(res.blob, res.name)} />
+      </div>
     </div>
   );
 }
@@ -67,7 +70,7 @@ export function Mp4ToGif() {
         sample={{ label: "Try a sample clip", busy: v.sampling, onPick: v.pickSample, note: "A 5-second dummy video so you can make a GIF straight away." }} /> : (
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="grid gap-3">
-            <video ref={v.ref} src={v.url} controls muted className="w-full rounded-2xl bg-ink" onLoadedMetadata={(e) => { const d = e.currentTarget.duration; v.setDur(d); setEnd(Math.min(3, d)); }} />
+            <video ref={v.ref} src={v.url} controls muted className="w-full rounded-2xl border border-[#D6CCB5] bg-[#000000]" onLoadedMetadata={(e) => { const d = e.currentTarget.duration; v.setDur(d); setEnd(Math.min(3, d)); }} />
             <Btn variant="ghost" onClick={v.reset}>Choose another video</Btn>
           </div>
           <div className="grid content-start gap-4">
@@ -78,7 +81,7 @@ export function Mp4ToGif() {
             <Field label={`Width ${width}px`}><input type="range" min={160} max={960} step={20} value={width} onChange={(e) => setWidth(+e.target.value)} className={rangeCls} /></Field>
             <Field label={`Frame rate ${fps} fps`}><input type="range" min={5} max={25} value={fps} onChange={(e) => setFps(+e.target.value)} className={rangeCls} /></Field>
             <Field label={`Colors ${colors}`} hint="Fewer colors = smaller file"><input type="range" min={16} max={256} step={16} value={colors} onChange={(e) => setColors(+e.target.value)} className={rangeCls} /></Field>
-            <Btn busy={busy} onClick={run}>{busy ? `Making GIF… ${progress}%` : "Create GIF"}</Btn>
+            <Btn busy={busy} onClick={run}><span className="tabular-nums">{busy ? `Making GIF… ${progress}%` : "Create GIF"}</span></Btn>
           </div>
         </div>
       )}
@@ -128,17 +131,17 @@ export function VideoCompressor() {
       {!v.url ? <Dropzone accept="video/*" label="Drop a video to compress" onFiles={([f]) => v.pick(f)}
         sample={{ label: "Try a sample clip", busy: v.sampling, onPick: v.pickSample, note: "A 5-second dummy video — compression runs in real time." }} /> : (
         <div className="grid gap-6 lg:grid-cols-2">
-          <video ref={v.ref} src={v.url} controls playsInline className="w-full rounded-2xl bg-ink" onLoadedMetadata={(e) => v.setDur(e.currentTarget.duration)} />
+          <video ref={v.ref} src={v.url} controls playsInline className="w-full rounded-2xl border border-[#D6CCB5] bg-[#000000]" onLoadedMetadata={(e) => v.setDur(e.currentTarget.duration)} />
           <div className="grid content-start gap-4">
-            <p className="text-sm">Original: <b>{fmtBytes(v.file!.size)}</b> · {v.dur.toFixed(1)}s</p>
+            <p className="text-sm tabular-nums text-[#000000]">Original: <b>{fmtBytes(v.file!.size)}</b> · {v.dur.toFixed(1)}s</p>
             <Field label="Resolution">
               <select className={inputCls} value={height} onChange={(e) => setHeight(+e.target.value)}>
                 {[1080, 720, 480, 360].map((r) => <option key={r} value={r}>{r}p</option>)}
               </select>
             </Field>
             <Field label={`Quality ${mbps} Mbps`} hint={`Estimated output ≈ ${fmtBytes(est)}`}><input type="range" min={0.3} max={6} step={0.1} value={mbps} onChange={(e) => setMbps(+e.target.value)} className={rangeCls} /></Field>
-            <Btn busy={busy} onClick={run}>{busy ? `Compressing… ${p}%` : "Compress video"}</Btn>
-            <p className="text-xs text-muted-foreground">Processing plays the video in real time inside your browser — keep this tab open.</p>
+            <Btn busy={busy} onClick={run}><span className="tabular-nums">{busy ? `Compressing… ${p}%` : "Compress video"}</span></Btn>
+            <p className="text-xs text-[#4A4740]">Processing plays the video in real time inside your browser — keep this tab open.</p>
             <Btn variant="ghost" onClick={v.reset}>Choose another video</Btn>
           </div>
         </div>
@@ -154,7 +157,7 @@ export function AspectRatio() {
   const v = useVideo();
   const [ratio, setRatio] = useState<keyof typeof RATIOS>("9:16");
   const [mode, setMode] = useState<"blur" | "pad" | "crop">("blur");
-  const [color, setColor] = useState("#4C0585");
+  const [color, setColor] = useState("#000000");
   const [p, setP] = useState(0); const [busy, setBusy] = useState(false); const [res, setRes] = useState<Res | null>(null);
   const preview = useRef<HTMLCanvasElement>(null);
   const paint = (ctx: CanvasRenderingContext2D, vid: HTMLVideoElement, W: number, H: number) => {
@@ -182,21 +185,37 @@ export function AspectRatio() {
       {!v.url ? <Dropzone accept="video/*" label="Drop a video to reframe" onFiles={([f]) => v.pick(f)}
         sample={{ label: "Try a sample clip", busy: v.sampling, onPick: v.pickSample, note: "A 5-second dummy video so you can preview every ratio." }} /> : (
         <div className="grid gap-6 lg:grid-cols-[1fr_1fr_280px]">
-          <video ref={v.ref} src={v.url} controls muted playsInline className="w-full rounded-2xl bg-ink" />
-          <div className="flex items-center justify-center rounded-2xl bg-muted p-3 grid-dots"><canvas ref={preview} className="max-h-80 max-w-full rounded-lg shadow-soft" /></div>
+          <video ref={v.ref} src={v.url} controls muted playsInline className="w-full rounded-2xl border border-[#D6CCB5] bg-[#000000]" />
+          <div className="grid-dots flex items-center justify-center rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3">
+            <canvas ref={preview} className="max-h-80 max-w-full rounded-lg border border-[#D6CCB5] shadow-sm" />
+          </div>
           <div className="grid content-start gap-4">
             <Field label="Aspect ratio">
-              <div className="flex flex-wrap gap-2">{(Object.keys(RATIOS) as (keyof typeof RATIOS)[]).map((r) => (
-                <button key={r} onClick={() => setRatio(r)} className={`rounded-full border px-3 py-1.5 text-sm font-bold ${ratio === r ? "bg-gradient-primary text-primary-foreground" : "hover:bg-secondary"}`}>{r}</button>
-              ))}</div>
+              <div className="flex flex-wrap gap-2">
+                {(Object.keys(RATIOS) as (keyof typeof RATIOS)[]).map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    aria-pressed={ratio === r}
+                    onClick={() => setRatio(r)}
+                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-semibold tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                      ratio === r
+                        ? "border-[#000000] bg-[#000000] text-[#FFFFFF]"
+                        : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-[#7895B2] hover:bg-[#FFFFFF] hover:text-[#000000]"
+                    }`}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
             </Field>
             <Field label="Fill style">
               <select className={inputCls} value={mode} onChange={(e) => setMode(e.target.value as typeof mode)}>
                 <option value="blur">Blurred background</option><option value="pad">Solid color bars</option><option value="crop">Crop to fill</option>
               </select>
             </Field>
-            {mode === "pad" && <Field label="Bar color"><input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-11 w-full rounded-xl border" /></Field>}
-            <Btn busy={busy} onClick={run}>{busy ? `Exporting… ${p}%` : "Export video"}</Btn>
+            {mode === "pad" && <Field label="Bar color"><input type="color" aria-label="Bar color" value={color} onChange={(e) => setColor(e.target.value)} className="h-11 w-full cursor-pointer rounded-xl border border-[#D6CCB5] bg-[#FAF7F0] p-1" /></Field>}
+            <Btn busy={busy} onClick={run}><span className="tabular-nums">{busy ? `Exporting… ${p}%` : "Export video"}</span></Btn>
             <Btn variant="ghost" onClick={v.reset}>Choose another video</Btn>
           </div>
         </div>
@@ -295,16 +314,16 @@ export function GifCompressor() {
           <Field label={`Size ${scale}%`}><input type="range" min={20} max={100} step={5} value={scale} onChange={(e) => setScale(+e.target.value)} className={rangeCls} /></Field>
           <Field label={skip === 1 ? "Keep all frames" : `Keep 1 in every ${skip} frames`}><input type="range" min={1} max={4} value={skip} onChange={(e) => setSkip(+e.target.value)} className={rangeCls} /></Field>
           <Field label={`Colors ${colors}`}><input type="range" min={16} max={256} step={16} value={colors} onChange={(e) => setColors(+e.target.value)} className={rangeCls} /></Field>
-          <div className="flex items-end"><Btn busy={busy} onClick={run}>{busy ? `Compressing… ${progress}%` : "Compress GIF"}</Btn></div>
+          <div className="flex items-end"><Btn busy={busy} onClick={run}><span className="tabular-nums">{busy ? `Compressing… ${progress}%` : "Compress GIF"}</span></Btn></div>
         </div>
       )}
       <ErrorNote msg={err} />
       {res && file && (
         <>
-          <p className="font-display font-bold text-primary">
+          <p className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] px-4 py-3 text-sm font-semibold tabular-nums text-[#000000]">
             {fmtBytes(file.size)} → {fmtBytes(res.blob.size)} {saved > 0 ? `(${saved}% smaller)` : ""}
           </p>
-          {saved <= 0 && <p className="text-sm text-muted-foreground">This GIF is already well optimised. Lower the size or colours, or keep fewer frames, and try again.</p>}
+          {saved <= 0 && <p className="text-sm text-[#4A4740]">This GIF is already well optimised. Lower the size or colours, or keep fewer frames, and try again.</p>}
           <ResultBox res={res} kind="gif" />
         </>
       )}

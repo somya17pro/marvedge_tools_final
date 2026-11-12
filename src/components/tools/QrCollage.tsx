@@ -4,7 +4,7 @@ import { drawQr, rr, type QrCorner, type QrShape } from "@/lib/qr-render";
 import { Btn, Field, download, inputCls, rangeCls } from "./ui";
 
 type Item = { id: number; value: string; caption: string; fg: string };
-const SWATCHES = ["#4C0585", "#1e1b4b", "#0f766e", "#b45309", "#be123c", "#111111"];
+const SWATCHES = ["#000000", "#1e1b4b", "#537190", "#0f766e", "#b45309", "#be123c"];
 let nextId = 1;
 
 /** Collage mode: several QR codes sharing the designed dot/corner style, laid out in a grid with printer-style borders. */
@@ -22,7 +22,7 @@ export function QrCollage({ value, fg, bg, shape, corner, logo }: {
   const [gap, setGap] = useState(32);
   const [borderOn, setBorderOn] = useState(true);
   const [borderW, setBorderW] = useState(6);
-  const [borderColor, setBorderColor] = useState("#4C0585");
+  const [borderColor, setBorderColor] = useState("#000000");
   const [radius, setRadius] = useState(24);
   const [title, setTitle] = useState("Scan to connect");
   const ref = useRef<HTMLCanvasElement>(null);
@@ -45,7 +45,7 @@ export function QrCollage({ value, fg, bg, shape, corner, logo }: {
     const ctx = c.getContext("2d")!;
     ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height);
     if (title) {
-      ctx.fillStyle = fg; ctx.font = "800 40px 'Plus Jakarta Sans', sans-serif"; ctx.textAlign = "center";
+      ctx.fillStyle = fg; ctx.font = "800 40px Inter, sans-serif"; ctx.textAlign = "center";
       ctx.fillText(title, c.width / 2, 60);
     }
     const tmp = document.createElement("canvas");
@@ -73,21 +73,40 @@ export function QrCollage({ value, fg, bg, shape, corner, logo }: {
     <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
       <div className="grid content-start gap-6">
         <div className="grid gap-3">
-          <span className="text-sm font-semibold">Codes in the collage · {items.length}</span>
+          <span className="text-sm font-semibold tabular-nums text-[#000000]">Codes in the collage · {items.length}</span>
           {items.map((it) => (
-            <div key={it.id} className="grid items-center gap-2 rounded-2xl border bg-card p-3 sm:grid-cols-[1fr_140px_auto_auto]">
-              <input className={inputCls} value={it.value} onChange={(e) => update(it.id, { value: e.target.value })} placeholder="https://…" aria-label="QR content" />
-              <input className={inputCls} value={it.caption} onChange={(e) => update(it.id, { caption: e.target.value })} placeholder="Caption" aria-label="Caption" />
-              <input type="color" value={it.fg} onChange={(e) => update(it.id, { fg: e.target.value })} aria-label="Code color" className="h-10 w-12 cursor-pointer rounded-lg border" />
-              <button onClick={() => setItems((xs) => xs.filter((x) => x.id !== it.id))} disabled={items.length <= 1} aria-label="Remove code"
-                className="grid h-10 w-10 place-items-center rounded-lg border hover:bg-secondary disabled:opacity-40"><Trash2 className="h-4 w-4" /></button>
+            <div key={it.id} className="grid items-center gap-2 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3 sm:grid-cols-[1fr_140px_auto_auto]">
+              <input className={inputCls.replace("bg-[#FAF7F0]", "bg-[#FFFFFF]")} value={it.value} onChange={(e) => update(it.id, { value: e.target.value })} placeholder="https://…" aria-label="QR content" />
+              <input className={inputCls.replace("bg-[#FAF7F0]", "bg-[#FFFFFF]")} value={it.caption} onChange={(e) => update(it.id, { caption: e.target.value })} placeholder="Caption" aria-label="Caption" />
+              <input type="color" value={it.fg} onChange={(e) => update(it.id, { fg: e.target.value })} aria-label="Code color" className="h-10 w-12 cursor-pointer rounded-lg border border-[#D6CCB5] bg-[#FFFFFF]" />
+              <button
+                type="button"
+                onClick={() => setItems((xs) => xs.filter((x) => x.id !== it.id))}
+                disabled={items.length <= 1}
+                aria-label="Remove code"
+                className="grid h-10 w-10 cursor-pointer place-items-center rounded-lg border border-[#D6CCB5] bg-[#FFFFFF] text-[#000000] transition-colors hover:border-[#000000]/40 hover:bg-[#E8DFCA]/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] disabled:pointer-events-none disabled:opacity-40"
+              >
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+              </button>
             </div>
           ))}
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => setItems((xs) => [...xs, { id: nextId++, value, caption: "", fg }])} disabled={items.length >= 24}
-              className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold hover:bg-secondary"><Plus className="h-4 w-4" />Add my designed code</button>
-            <button onClick={() => setItems((xs) => [...xs, { id: nextId++, value: "", caption: "", fg }])} disabled={items.length >= 24}
-              className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold hover:bg-secondary"><Plus className="h-4 w-4" />Add blank</button>
+            <button
+              type="button"
+              onClick={() => setItems((xs) => [...xs, { id: nextId++, value, caption: "", fg }])}
+              disabled={items.length >= 24}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#D6CCB5] bg-[#FAF7F0] px-4 py-2 text-xs font-semibold text-[#000000] transition-colors hover:border-[#000000]/40 hover:bg-[#FFFFFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] disabled:opacity-50"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />Add my designed code
+            </button>
+            <button
+              type="button"
+              onClick={() => setItems((xs) => [...xs, { id: nextId++, value: "", caption: "", fg }])}
+              disabled={items.length >= 24}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#D6CCB5] bg-[#FAF7F0] px-4 py-2 text-xs font-semibold text-[#000000] transition-colors hover:border-[#000000]/40 hover:bg-[#FFFFFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] disabled:opacity-50"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />Add blank
+            </button>
           </div>
         </div>
 
@@ -98,19 +117,27 @@ export function QrCollage({ value, fg, bg, shape, corner, logo }: {
         </div>
 
         <div className="grid gap-3">
-          <label className="flex items-center gap-2 text-sm font-semibold">
-            <input type="checkbox" checked={borderOn} onChange={(e) => setBorderOn(e.target.checked)} className="accent-primary" /> Border around each code
+          <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-[#000000]">
+            <input type="checkbox" checked={borderOn} onChange={(e) => setBorderOn(e.target.checked)} className="accent-[#000000]" /> Border around each code
           </label>
           {borderOn && (
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label={`Thickness · ${borderW}px`}><input type="range" min={2} max={20} value={borderW} onChange={(e) => setBorderW(+e.target.value)} className={rangeCls} /></Field>
               <Field label={`Corner radius · ${radius}px`}><input type="range" min={0} max={60} value={radius} onChange={(e) => setRadius(+e.target.value)} className={rangeCls} /></Field>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-muted-foreground">Border color:</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold text-[#4A4740]">Border color:</span>
                 {SWATCHES.map((c) => (
-                  <button key={c} aria-label={`Border color ${c}`} onClick={() => setBorderColor(c)}
-                    className={`h-7 w-7 rounded-full border-2 transition ${borderColor === c ? "scale-110 border-primary ring-2 ring-ring/40" : "border-transparent hover:scale-105"}`}
-                    style={{ background: c }} />
+                  <button
+                    key={c}
+                    type="button"
+                    aria-label={`Border color ${c}`}
+                    aria-pressed={borderColor === c}
+                    onClick={() => setBorderColor(c)}
+                    className={`h-7 w-7 cursor-pointer rounded-full border-2 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                      borderColor === c ? "scale-110 border-[#000000] ring-2 ring-[#7895B2]/50" : "border-[#D6CCB5] hover:scale-105"
+                    }`}
+                    style={{ background: c }}
+                  />
                 ))}
               </div>
             </div>
@@ -119,11 +146,11 @@ export function QrCollage({ value, fg, bg, shape, corner, logo }: {
         </div>
       </div>
 
-      <div className="grid content-start justify-items-center gap-4 rounded-3xl border bg-muted/50 p-6">
-        <h3 className="font-display text-lg font-bold">Collage preview</h3>
-        <canvas ref={ref} className="h-auto max-w-full rounded-lg shadow-elegant" />
-        <p className="text-center text-xs text-muted-foreground">Uses the dot and corner style from the Design tab.</p>
-        <Btn onClick={() => ref.current && download(ref.current.toDataURL("image/png"), "qr-collage.png")}><Download className="h-4 w-4" />Download collage PNG</Btn>
+      <div className="grid content-start justify-items-center gap-4 rounded-3xl border border-[#D6CCB5] bg-[#FAF7F0] p-6">
+        <h3 className="font-serif text-xl font-normal tracking-tight text-[#000000]">Collage preview</h3>
+        <canvas ref={ref} className="h-auto max-w-full rounded-lg border border-[#D6CCB5] shadow-sm" />
+        <p className="text-center text-xs text-[#4A4740]">Uses the dot and corner style from the Design tab.</p>
+        <Btn onClick={() => ref.current && download(ref.current.toDataURL("image/png"), "qr-collage.png")}><Download className="h-4 w-4" aria-hidden="true" />Download collage PNG</Btn>
       </div>
     </div>
   );

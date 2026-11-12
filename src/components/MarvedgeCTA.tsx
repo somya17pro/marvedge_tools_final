@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Play, Sparkles } from "lucide-react";
 import { MARVEDGE_URL } from "@/lib/tools";
 
@@ -111,19 +112,22 @@ export function SiteFooter() {
         </div>
 
         <div className="flex items-center gap-6 text-xs font-medium text-[#000000]/75">
-          <a href="#tools" className="transition-colors hover:text-[#000000]">
+          <Link
+            to="/"
+            className="rounded transition-colors hover:text-[#000000] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
+          >
             All 19 Tools
-          </a>
+          </Link>
           <span className="text-[#D6CCB5]">·</span>
-          <span className="text-[#000000]/60">Client-Side Wasm & GPU</span>
+          <span className="text-[#000000]/70">Client-Side Wasm &amp; GPU</span>
           <span className="text-[#D6CCB5]">·</span>
           <a
             href={MARVEDGE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-semibold text-[#000000] hover:text-[#7895B2]"
+            className="inline-flex items-center gap-1 rounded font-semibold text-[#000000] hover:text-[#537190] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
           >
-            marvedge.com <ArrowUpRight className="h-3 w-3" />
+            marvedge.com <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
           </a>
         </div>
       </div>

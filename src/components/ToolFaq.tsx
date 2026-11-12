@@ -10,19 +10,19 @@ export function ToolFaqSection({ slug, toolName }: { slug: string; toolName: str
 
   const toggle = (index: number) => {
     setOpenIndices((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
 
   return (
-    <section className="mx-auto max-w-4xl px-5 py-16 sm:px-8">
+    <section id="faq" className="mx-auto max-w-4xl scroll-mt-24 px-5 py-14 sm:px-8">
       {/* Minimal Header */}
-      <div className="mb-10 text-center sm:mb-14">
-        <h2 className="font-serif text-3xl font-normal tracking-tight text-[#000000] sm:text-4xl lg:text-5xl">
+      <div className="mb-10 text-center sm:mb-12">
+        <h2 className="font-serif text-3xl font-normal tracking-tight text-balance text-[#000000] sm:text-4xl lg:text-5xl">
           Frequently Asked Questions
         </h2>
-        <p className="mt-3 text-sm text-[#4A4740] sm:text-base">
-          Questions and answers regarding {toolName}.
+        <p className="mt-3 text-pretty text-sm text-[#4A4740] sm:text-base">
+          Common questions about {toolName} inputs, privacy, and exports.
         </p>
       </div>
 
@@ -30,6 +30,7 @@ export function ToolFaqSection({ slug, toolName }: { slug: string; toolName: str
       <div className="divide-y divide-[#D6CCB5]/70 border-y border-[#D6CCB5]/70">
         {faqs.map((faq, index) => {
           const isOpen = openIndices.includes(index);
+          const panelId = `${slug}-faq-panel-${index}`;
 
           return (
             <div key={faq.q} className="group">
@@ -37,16 +38,18 @@ export function ToolFaqSection({ slug, toolName }: { slug: string; toolName: str
                 type="button"
                 onClick={() => toggle(index)}
                 aria-expanded={isOpen}
-                className="flex w-full items-center justify-between gap-6 py-6 text-left cursor-pointer transition-colors"
+                aria-controls={panelId}
+                className="flex w-full cursor-pointer items-center justify-between gap-6 rounded-xl py-6 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] focus-visible:ring-offset-4 focus-visible:ring-offset-[#E8DFCA]"
               >
-                <span className="text-base font-medium tracking-tight text-[#000000] transition-colors group-hover:text-[#7895B2] sm:text-lg">
+                <span className="text-base font-medium tracking-tight text-[#000000] transition-colors group-hover:text-[#537190] sm:text-lg">
                   {faq.q}
                 </span>
 
                 <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#D6CCB5] bg-transparent text-[#000000] transition-all duration-300 ${
+                  aria-hidden="true"
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#D6CCB5] bg-transparent text-[#000000] transition-[transform,background-color,border-color,color] duration-300 ${
                     isOpen
-                      ? "rotate-45 bg-[#000000] text-[#FFFFFF] border-[#000000]"
+                      ? "rotate-45 border-[#000000] bg-[#000000] text-[#FFFFFF]"
                       : "group-hover:border-[#7895B2]"
                   }`}
                 >
@@ -56,14 +59,15 @@ export function ToolFaqSection({ slug, toolName }: { slug: string; toolName: str
 
               {/* Smooth Grid Accordion */}
               <div
+                id={panelId}
                 className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
                   isOpen
-                    ? "grid-rows-[1fr] opacity-100 pb-6"
-                    : "grid-rows-[0fr] opacity-0 pointer-events-none"
+                    ? "grid-rows-[1fr] pb-6 opacity-100"
+                    : "pointer-events-none grid-rows-[0fr] opacity-0"
                 }`}
               >
                 <div className="overflow-hidden">
-                  <p className="pr-12 text-sm leading-relaxed text-[#4A4740] sm:text-[15px]">
+                  <p className="pr-12 text-pretty text-sm leading-relaxed text-[#4A4740] sm:text-[15px]">
                     {faq.a}
                   </p>
                 </div>

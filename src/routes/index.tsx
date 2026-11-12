@@ -47,8 +47,10 @@ export const Route = createFileRoute("/")({
           "Nineteen focused tools to trim clips, compress images, and generate scripts. 100% private in-browser execution.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://marvedge.com/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://marvedge.com/" }],
   }),
   component: Index,
 });

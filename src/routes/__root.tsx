@@ -80,6 +80,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#E8DFCA" },
       { title: "Marvedge — 19 Minimalist In-Browser & AI Media Tools" },
       { name: "description", content: "Nineteen lightweight browser utilities and AI media tools for founders, creators, and engineers. Zero server uploads, instant execution, zero latency." },
       { name: "author", content: "Marvedge" },
@@ -124,9 +125,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-[#000000] focus:px-4 focus:py-2 focus:text-xs focus:font-semibold focus:text-[#FFFFFF] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#7895B2]"
+      >
+        Skip to content
+      </a>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <SiteHeader />
-      <main><Outlet /></main>
+      <main id="main-content" tabIndex={-1} className="outline-none"><Outlet /></main>
       <SiteFooter />
     </QueryClientProvider>
   );

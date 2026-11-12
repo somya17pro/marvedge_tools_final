@@ -55,13 +55,19 @@ export function ImageCompressor() {
       )}
       {out.length > 0 && (
         <>
-          <p className="font-display text-lg font-bold text-primary">You saved {fmtBytes(Math.max(0, saved))} 🎉</p>
+          <p className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] px-4 py-3 text-sm font-semibold tabular-nums text-[#000000]">
+            Saved {fmtBytes(Math.max(0, saved))} across {out.length} image{out.length > 1 ? "s" : ""}.
+          </p>
           <div className="grid gap-3">
             {out.map((o) => (
-              <div key={o.name} className="flex flex-wrap items-center gap-4 rounded-2xl border p-3">
-                <img src={o.url} alt="" className="h-16 w-16 rounded-lg object-cover" />
-                <div className="flex-1 text-sm"><p className="font-semibold">{o.name}</p>
-                  <p className="text-muted-foreground">{fmtBytes(o.before)} → <b className="text-primary">{fmtBytes(o.blob.size)}</b> ({Math.round((1 - o.blob.size / o.before) * 100)}% smaller)</p></div>
+              <div key={o.name} className="flex flex-wrap items-center gap-4 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3.5">
+                <img src={o.url} alt="" width={64} height={64} className="h-16 w-16 shrink-0 rounded-xl border border-[#D6CCB5] bg-[#FFFFFF] object-cover" />
+                <div className="min-w-0 flex-1 text-sm">
+                  <p className="truncate font-semibold text-[#000000]">{o.name}</p>
+                  <p className="mt-0.5 tabular-nums text-[#4A4740]">
+                    {fmtBytes(o.before)} → <b className="text-[#000000]">{fmtBytes(o.blob.size)}</b> ({Math.round((1 - o.blob.size / o.before) * 100)}% smaller)
+                  </p>
+                </div>
                 <DownloadBtn onClick={() => download(o.blob, o.name)} />
               </div>
             ))}
@@ -144,20 +150,27 @@ export function ImageResizer() {
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
 
           <div className="grid content-start gap-3">
-            <div className="flex min-h-64 items-center justify-center rounded-2xl bg-muted grid-dots p-4">
-              {out ? <img src={out.url} alt="Preview" className="max-h-96 max-w-full rounded-lg shadow-soft" /> : <div className="h-40 w-40 rounded-lg bg-secondary" />}
+            <div className="grid-dots flex min-h-64 items-center justify-center rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
+              {out ? <img src={out.url} alt="Preview" className="max-h-96 max-w-full rounded-lg border border-[#D6CCB5] shadow-sm" /> : <div className="h-40 w-40 rounded-lg bg-[#E8DFCA]" />}
             </div>
-            <div className={`rounded-2xl border p-4 text-sm ${out && !out.hits ? "border-destructive/40 bg-destructive/5" : "border-primary/20 bg-secondary/40"}`}>
+            <div
+              aria-live="polite"
+              className={`rounded-2xl border p-4 text-sm ${
+                out && !out.hits
+                  ? "border-[#D95338]/35 bg-[#D95338]/10 text-[#9F2D18]"
+                  : "border-[#D6CCB5] bg-[#FAF7F0] text-[#000000]"
+              }`}
+            >
               {busy ? (
-                <p className="flex items-center gap-2 font-semibold text-primary"><Loader2 className="h-4 w-4 animate-spin" /> Matching your target size…</p>
+                <p className="flex items-center gap-2 font-semibold text-[#000000]"><Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Matching your target size…</p>
               ) : out ? (
                 <>
-                  <p className="flex items-center gap-2 font-semibold">
-                    {out.hits ? <Check className="h-4 w-4 text-primary" /> : <AlertTriangle className="h-4 w-4 text-destructive" />}
+                  <p className="flex flex-wrap items-center gap-2 font-semibold tabular-nums">
+                    {out.hits ? <Check className="h-4 w-4 text-[#000000]" aria-hidden="true" /> : <AlertTriangle className="h-4 w-4 text-[#9F2D18]" aria-hidden="true" />}
                     {fmtBytes(out.blob.size)}
-                    {target ? (out.hits ? <span className="text-primary">— under your {kb} KB target</span> : <span className="text-destructive">— still above your {kb} KB target</span>) : <span className="text-muted-foreground">— no target set</span>}
+                    {target ? (out.hits ? <span className="text-[#4A4740]">— under your {kb} KB target</span> : <span className="text-[#9F2D18]">— still above your {kb} KB target</span>) : <span className="text-[#4A4740]">— no target set</span>}
                   </p>
-                  <p className="mt-1 text-muted-foreground">
+                  <p className={`mt-1 tabular-nums ${!out.hits ? "text-[#9F2D18]" : "text-[#4A4740]"}`}>
                     Quality {Math.round(out.q * 100)}%
                     {out.scale < 1 ? ` · output ${Math.round(w * out.scale)}×${Math.round(h * out.scale)} px to fit the target` : target ? " · full size kept" : ""}
                     {out.q < 0.25 ? " · it will look soft — a looser target stays sharper" : ""}
@@ -172,7 +185,7 @@ export function ImageResizer() {
               <Field label="Width px"><input className={inputCls} type="number" value={w} onChange={(e) => { const v = +e.target.value; setW(v); if (lock) setH(Math.round(v / ratio)); }} /></Field>
               <Field label="Height px"><input className={inputCls} type="number" value={h} onChange={(e) => { const v = +e.target.value; setH(v); if (lock) setW(Math.round(v * ratio)); }} /></Field>
             </div>
-            <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" checked={lock} onChange={(e) => setLock(e.target.checked)} className="accent-primary" /> Lock aspect ratio</label>
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-[#000000]"><input type="checkbox" checked={lock} onChange={(e) => setLock(e.target.checked)} className="accent-[#000000]" /> Lock aspect ratio</label>
             <Field label="Fit">
               <select className={inputCls} value={fit} onChange={(e) => setFit(e.target.value as typeof fit)}>
                 <option value="cover">Crop to fill</option><option value="contain">Fit inside (white bars)</option><option value="stretch">Stretch</option>
@@ -183,9 +196,29 @@ export function ImageResizer() {
                 <input className={inputCls} type="number" min={1} value={kb} onChange={(e) => setKb(e.target.value ? +e.target.value : "")} placeholder="e.g. 20" />
                 <div className="flex flex-wrap gap-1.5">
                   {[10, 20, 50, 100, 200].map((v) => (
-                    <button key={v} type="button" onClick={() => setKb(v)} className={`rounded-full border px-3 py-1 text-xs font-bold ${kb === v ? "bg-gradient-primary text-primary-foreground" : "hover:bg-secondary"}`}>≤ {v} KB</button>
+                    <button
+                      key={v}
+                      type="button"
+                      aria-pressed={kb === v}
+                      onClick={() => setKb(v)}
+                      className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-semibold tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                        kb === v
+                          ? "border-[#000000] bg-[#000000] text-[#FFFFFF]"
+                          : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-[#7895B2] hover:bg-[#FFFFFF] hover:text-[#000000]"
+                      }`}
+                    >
+                      ≤ {v} KB
+                    </button>
                   ))}
-                  {kb !== "" && <button type="button" onClick={() => setKb("")} className="rounded-full border px-3 py-1 text-xs font-bold text-muted-foreground hover:bg-secondary">No target</button>}
+                  {kb !== "" && (
+                    <button
+                      type="button"
+                      onClick={() => setKb("")}
+                      className="cursor-pointer rounded-full border border-[#D6CCB5] bg-[#FFFFFF] px-3 py-1 text-xs font-semibold text-[#4A4740] transition-colors hover:border-[#000000]/40 hover:text-[#000000] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
+                    >
+                      No target
+                    </button>
+                  )}
                 </div>
               </div>
             </Field>
@@ -232,19 +265,33 @@ export function FormatConverter() {
           <Field label="Convert to">
             <div className="flex gap-2">
               {["image/png", "image/jpeg", "image/webp"].map((m) => (
-                <button key={m} onClick={() => setTo(m)} className={`rounded-full border px-4 py-2 text-sm font-bold ${to === m ? "bg-gradient-primary text-primary-foreground" : "hover:bg-secondary"}`}>{extFor(m).toUpperCase()}</button>
+                <button
+                  key={m}
+                  type="button"
+                  aria-pressed={to === m}
+                  onClick={() => setTo(m)}
+                  className={`cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                    to === m
+                      ? "border-[#000000] bg-[#000000] text-[#FFFFFF]"
+                      : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-[#7895B2] hover:bg-[#FFFFFF] hover:text-[#000000]"
+                  }`}
+                >
+                  {extFor(m).toUpperCase()}
+                </button>
               ))}
             </div>
           </Field>
           <Btn busy={busy} onClick={run}>Convert {files.length} file{files.length > 1 ? "s" : ""}</Btn>
-          {to === "image/jpeg" && <span className="text-xs text-muted-foreground">JPG has no transparency — transparent areas become white.</span>}
+          {to === "image/jpeg" && <span className="text-xs text-[#4A4740]">JPG has no transparency — transparent areas become white.</span>}
         </div>
       )}
       {out.length > 0 && (
         <div className="grid gap-3">
           {out.map((o) => (
-            <div key={o.name} className="flex items-center gap-3 rounded-2xl border p-3 text-sm">
-              <img src={o.url} alt="" className="h-12 w-12 rounded object-cover" /><span className="flex-1 font-semibold">{o.name}</span><span className="text-muted-foreground">{fmtBytes(o.blob.size)}</span>
+            <div key={o.name} className="flex flex-wrap items-center gap-3 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3 text-sm">
+              <img src={o.url} alt="" width={48} height={48} className="h-12 w-12 shrink-0 rounded-lg border border-[#D6CCB5] bg-[#FFFFFF] object-cover" />
+              <span className="min-w-0 flex-1 truncate font-semibold text-[#000000]">{o.name}</span>
+              <span className="tabular-nums text-[#4A4740]">{fmtBytes(o.blob.size)}</span>
               <DownloadBtn onClick={() => download(o.blob, o.name)}>Save</DownloadBtn>
             </div>
           ))}
@@ -271,13 +318,13 @@ const QR_LEVELS = [
   { id: "Q", label: "Q · 25%", hint: "Print & posters" },
   { id: "H", label: "H · 30%", hint: "Withstands damage" },
 ] as const;
-const QR_SWATCHES = ["#4C0585", "#1e1b4b", "#0f766e", "#b45309", "#be123c", "#111111"];
+const QR_SWATCHES = ["#000000", "#1e1b4b", "#537190", "#0f766e", "#b45309", "#be123c"];
 
 function StepHead({ n, title }: { n: number; title: string }) {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-primary font-display text-sm font-extrabold text-primary-foreground">{n}</span>
-      <h3 className="font-display text-lg font-bold">{title}</h3>
+      <span className="grid h-7 w-7 place-items-center rounded-full bg-[#000000] text-xs font-bold tabular-nums text-[#FFFFFF]">{n}</span>
+      <h3 className="font-serif text-xl font-normal tracking-tight text-[#000000]">{title}</h3>
     </div>
   );
 }
@@ -306,7 +353,7 @@ function ShapeThumb({ shape }: { shape: QrShape }) {
   useEffect(() => {
     const c = ref.current; if (!c) return;
     const ctx = c.getContext("2d")!; c.width = 100; c.height = 100;
-    ctx.clearRect(0, 0, 100, 100); ctx.fillStyle = "#4C0585";
+    ctx.clearRect(0, 0, 100, 100); ctx.fillStyle = "#000000";
     for (let r = 0; r < 5; r++) for (let k = 0; k < 5; k++) if (THUMB[r * 5 + k])
       drawModule(ctx, shape, 4 + k * 18.4, 4 + r * 18.4, 18.4, (dr, dc) => r + dr < 5 && k + dc < 5 && !!THUMB[(r + dr) * 5 + k + dc]);
   }, [shape]);
@@ -317,9 +364,9 @@ function CornerThumb({ corner }: { corner: QrCorner }) {
   const leaf = corner === "leaf";
   const style = (s: number) => leaf ? { borderRadius: `${r(s)}px 0 ${r(s)}px 0` } : { borderRadius: r(s) };
   return (
-    <span className="mb-2 grid h-12 w-12 place-items-center bg-primary" style={style(48)}>
-      <span className="grid h-8 w-8 place-items-center bg-background" style={style(32)}>
-        <span className="h-4 w-4 bg-primary" style={style(16)} />
+    <span className="mb-2 grid h-12 w-12 place-items-center bg-[#000000]" style={style(48)}>
+      <span className="grid h-8 w-8 place-items-center bg-[#FFFFFF]" style={style(32)}>
+        <span className="h-4 w-4 bg-[#000000]" style={style(16)} />
       </span>
     </span>
   );
@@ -336,9 +383,9 @@ function FrameThumb({ id, fg }: { id: QrFrame; fg: string }) {
   const qr = <g fill={fg} opacity={0.85}>{dots.map(([x, y], i) => <rect key={i} x={x * 2.4} y={y * 2.4} width={2} height={2} rx={0.5} />)}</g>;
   return (
     <svg viewBox="0 0 28 34" className="h-14 w-full" aria-hidden>
-      {id === "none" && <g><circle cx="14" cy="15" r="9" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground" /><line x1="7" y1="22" x2="21" y2="8" stroke="currentColor" strokeWidth="2" className="text-muted-foreground" /></g>}
+      {id === "none" && <g><circle cx="14" cy="15" r="9" fill="none" stroke="#4A4740" strokeWidth="2" /><line x1="7" y1="22" x2="21" y2="8" stroke="#4A4740" strokeWidth="2" /></g>}
       {id === "border" && <g><rect x="4" y="4" width="20" height="26" rx="4" fill="none" stroke={fg} strokeWidth="2" /><g transform="translate(4.5 7)">{qr}</g></g>}
-      {id === "banner" && <g><rect x="4" y="3" width="20" height="28" rx="4" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-border" /><g transform="translate(4.5 6)">{qr}</g><rect x="6" y="25" width="16" height="4.5" rx="2.2" fill={fg} /></g>}
+      {id === "banner" && <g><rect x="4" y="3" width="20" height="28" rx="4" fill="none" stroke="#D6CCB5" strokeWidth="1.4" /><g transform="translate(4.5 6)">{qr}</g><rect x="6" y="25" width="16" height="4.5" rx="2.2" fill={fg} /></g>}
       {id === "badge" && <g><circle cx="14" cy="17" r="12.5" fill="none" stroke={fg} strokeWidth="2" /><g transform="translate(4.5 9)">{qr}</g></g>}
     </svg>
   );
@@ -352,7 +399,7 @@ export function QrGenerator() {
   const [mailTo, setMailTo] = useState(""); const [mailSub, setMailSub] = useState(""); const [mailBody, setMailBody] = useState("");
   const [phone, setPhone] = useState("");
   const [vName, setVName] = useState(""); const [vOrg, setVOrg] = useState(""); const [vTel, setVTel] = useState(""); const [vMail, setVMail] = useState(""); const [vUrl, setVUrl] = useState("");
-  const [fg, setFg] = useState("#4C0585"); const [bg, setBg] = useState("#FFFDFE");
+  const [fg, setFg] = useState("#000000"); const [bg, setBg] = useState("#FFFFFF");
   const [size, setSize] = useState(512);
   const [level, setLevel] = useState<"L" | "M" | "Q" | "H">("M");
   const [designTab, setDesignTab] = useState<QrDesignTab>("frame");
@@ -385,20 +432,40 @@ export function QrGenerator() {
       {/* type tabs */}
       <div className="flex flex-wrap gap-2">
         {QR_TYPES.map(({ id, label, Icon }) => (
-          <button key={id} onClick={() => setType(id)}
-            className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold transition ${type === id ? "border-primary bg-secondary text-primary shadow-soft" : "hover:border-lavender hover:bg-muted"}`}>
-            <span className={`grid h-7 w-7 place-items-center rounded-lg ${type === id ? "bg-gradient-primary text-primary-foreground" : "bg-muted text-primary"}`}><Icon className="h-4 w-4" /></span>
+          <button
+            key={id}
+            type="button"
+            aria-pressed={type === id}
+            onClick={() => setType(id)}
+            className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+              type === id
+                ? "border-[#000000] bg-[#E8DFCA]/60 text-[#000000]"
+                : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-[#7895B2] hover:bg-[#FFFFFF] hover:text-[#000000]"
+            }`}
+          >
+            <span className={`grid h-7 w-7 place-items-center rounded-lg ${type === id ? "bg-[#000000] text-[#FFFFFF]" : "border border-[#D6CCB5] bg-[#FFFFFF] text-[#000000]"}`}>
+              <Icon className="h-4 w-4" aria-hidden="true" />
+            </span>
             {label}
           </button>
         ))}
       </div>
 
       {/* design vs print mode */}
-      <div className="flex w-fit gap-1 rounded-2xl bg-muted p-1">
+      <div className="flex w-fit flex-wrap gap-1 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-1">
         {([["design", "Design & download", Download], ["print", "Print a sheet", Printer], ["collage", "QR collage", LayoutGrid]] as const).map(([m, label, Icon]) => (
-          <button key={m} onClick={() => setMode(m)}
-            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${mode === m ? "bg-card text-primary shadow-soft" : "text-muted-foreground hover:text-foreground"}`}>
-            <Icon className="h-4 w-4" />{label}
+          <button
+            key={m}
+            type="button"
+            aria-pressed={mode === m}
+            onClick={() => setMode(m)}
+            className={`inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+              mode === m
+                ? "bg-[#000000] text-[#FFFFFF] shadow-xs"
+                : "text-[#4A4740] hover:text-[#000000]"
+            }`}
+          >
+            <Icon className="h-4 w-4" aria-hidden="true" />{label}
           </button>
         ))}
       </div>
@@ -451,10 +518,19 @@ export function QrGenerator() {
           {/* step 2: design */}
           <div className="grid gap-4">
             <StepHead n={2} title="Design your QR" />
-            <div className="flex flex-wrap gap-1 rounded-2xl bg-muted p-1">
+            <div className="flex w-fit flex-wrap gap-1 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-1">
               {(["frame", "shape", "logo", "level"] as const).map((t) => (
-                <button key={t} onClick={() => setDesignTab(t)}
-                  className={`rounded-xl px-4 py-2 text-sm font-bold capitalize transition ${designTab === t ? "bg-card text-primary shadow-soft" : "text-muted-foreground hover:text-foreground"}`}>
+                <button
+                  key={t}
+                  type="button"
+                  aria-pressed={designTab === t}
+                  onClick={() => setDesignTab(t)}
+                  className={`cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                    designTab === t
+                      ? "bg-[#000000] text-[#FFFFFF] shadow-xs"
+                      : "text-[#4A4740] hover:text-[#000000]"
+                  }`}
+                >
                   {t}
                 </button>
               ))}
@@ -463,10 +539,19 @@ export function QrGenerator() {
             {designTab === "frame" && (
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {QR_FRAMES.map((f) => (
-                  <button key={f.id} onClick={() => setFrame(f.id)}
-                    className={`grid justify-items-center gap-1 rounded-2xl border p-3 transition ${frame === f.id ? "border-primary bg-secondary shadow-soft" : "hover:border-lavender hover:bg-muted"}`}>
+                  <button
+                    key={f.id}
+                    type="button"
+                    aria-pressed={frame === f.id}
+                    onClick={() => setFrame(f.id)}
+                    className={`grid cursor-pointer justify-items-center gap-1 rounded-2xl border p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                      frame === f.id
+                        ? "border-[#000000] bg-[#E8DFCA]/60"
+                        : "border-[#D6CCB5] bg-[#FAF7F0] hover:border-[#7895B2] hover:bg-[#FFFFFF]"
+                    }`}
+                  >
                     <FrameThumb id={f.id} fg={fg} />
-                    <span className="text-xs font-bold">{f.label}</span>
+                    <span className="text-xs font-semibold text-[#000000]">{f.label}</span>
                   </button>
                 ))}
               </div>
@@ -474,47 +559,81 @@ export function QrGenerator() {
 
             {designTab === "shape" && (
               <div className="grid gap-4">
-                <span className="text-sm font-semibold">Dot style</span>
+                <span className="text-sm font-semibold text-[#000000]">Dot style</span>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {QR_SHAPES.map((s) => (
-                    <button key={s.id} onClick={() => setShape(s.id)}
-                      className={`rounded-2xl border px-3 py-3 text-left transition ${shape === s.id ? "border-primary bg-secondary shadow-soft" : "hover:border-lavender hover:bg-muted"}`}>
+                    <button
+                      key={s.id}
+                      type="button"
+                      aria-pressed={shape === s.id}
+                      onClick={() => setShape(s.id)}
+                      className={`cursor-pointer rounded-2xl border px-3 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                        shape === s.id
+                          ? "border-[#000000] bg-[#E8DFCA]/60"
+                          : "border-[#D6CCB5] bg-[#FAF7F0] hover:border-[#7895B2] hover:bg-[#FFFFFF]"
+                      }`}
+                    >
                       <ShapeThumb shape={s.id} />
-                      <span className="block text-sm font-bold">{s.label}</span>
-                      <span className="block text-xs text-muted-foreground">{s.hint}</span>
+                      <span className="block text-sm font-bold text-[#000000]">{s.label}</span>
+                      <span className="block text-xs text-[#4A4740]">{s.hint}</span>
                     </button>
                   ))}
                 </div>
-                <span className="text-sm font-semibold">Corner eyes</span>
+                <span className="text-sm font-semibold text-[#000000]">Corner eyes</span>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {QR_CORNERS.map((k) => (
-                    <button key={k.id} onClick={() => setCorner(k.id)}
-                      className={`flex flex-col items-center rounded-2xl border px-3 py-3 transition ${corner === k.id ? "border-primary bg-secondary shadow-soft" : "hover:border-lavender hover:bg-muted"}`}>
+                    <button
+                      key={k.id}
+                      type="button"
+                      aria-pressed={corner === k.id}
+                      onClick={() => setCorner(k.id)}
+                      className={`flex cursor-pointer flex-col items-center rounded-2xl border px-3 py-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                        corner === k.id
+                          ? "border-[#000000] bg-[#E8DFCA]/60"
+                          : "border-[#D6CCB5] bg-[#FAF7F0] hover:border-[#7895B2] hover:bg-[#FFFFFF]"
+                      }`}
+                    >
                       <CornerThumb corner={k.id} />
-                      <span className="text-sm font-bold">{k.label}</span>
+                      <span className="text-sm font-bold text-[#000000]">{k.label}</span>
                     </button>
                   ))}
                 </div>
                 <div className="grid gap-3">
-                  <span className="text-sm font-semibold">Code color</span>
+                  <span className="text-sm font-semibold text-[#000000]">Code color</span>
                   <div className="flex flex-wrap items-center gap-2">
                     {QR_SWATCHES.map((c) => (
-                      <button key={c} aria-label={`Code color ${c}`} onClick={() => setFg(c)}
-                        className={`h-9 w-9 rounded-full border-2 transition ${fg === c ? "scale-110 border-primary ring-2 ring-ring/40" : "border-transparent hover:scale-105"}`}
-                        style={{ background: c }} />
+                      <button
+                        key={c}
+                        type="button"
+                        aria-label={`Code color ${c}`}
+                        aria-pressed={fg === c}
+                        onClick={() => setFg(c)}
+                        className={`h-9 w-9 cursor-pointer rounded-full border-2 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                          fg === c ? "scale-110 border-[#000000] ring-2 ring-[#7895B2]/50" : "border-[#D6CCB5] hover:scale-105"
+                        }`}
+                        style={{ background: c }}
+                      />
                     ))}
-                    <input type="color" value={fg} onChange={(e) => setFg(e.target.value)} aria-label="Custom code color" className="h-9 w-12 cursor-pointer rounded-lg border" />
+                    <input type="color" value={fg} onChange={(e) => setFg(e.target.value)} aria-label="Custom code color" className="h-9 w-12 cursor-pointer rounded-lg border border-[#D6CCB5]" />
                   </div>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Field label="Background">
                     <div className="flex items-center gap-2">
-                      {["#FFFDFE", "#ffffff", "#f5f3ff", "#111111"].map((c) => (
-                        <button key={c} aria-label={`Background ${c}`} onClick={() => setBg(c)}
-                          className={`h-9 w-9 rounded-full border-2 transition ${bg === c ? "scale-110 border-primary ring-2 ring-ring/40" : "border-border hover:scale-105"}`}
-                          style={{ background: c }} />
+                      {["#FFFFFF", "#FAF7F0", "#E8DFCA", "#111111"].map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          aria-label={`Background ${c}`}
+                          aria-pressed={bg === c}
+                          onClick={() => setBg(c)}
+                          className={`h-9 w-9 cursor-pointer rounded-full border-2 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                            bg === c ? "scale-110 border-[#000000] ring-2 ring-[#7895B2]/50" : "border-[#D6CCB5] hover:scale-105"
+                          }`}
+                          style={{ background: c }}
+                        />
                       ))}
-                      <input type="color" value={bg} onChange={(e) => setBg(e.target.value)} aria-label="Custom background color" className="h-9 w-12 cursor-pointer rounded-lg border" />
+                      <input type="color" value={bg} onChange={(e) => setBg(e.target.value)} aria-label="Custom background color" className="h-9 w-12 cursor-pointer rounded-lg border border-[#D6CCB5]" />
                     </div>
                   </Field>
                   <Field label={`Size · ${size}px`}><input type="range" min={128} max={1024} step={32} value={size} onChange={(e) => setSize(+e.target.value)} className={rangeCls} /></Field>
@@ -525,43 +644,53 @@ export function QrGenerator() {
             {designTab === "logo" && (
               <div className="grid gap-3">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Btn variant="ghost" onClick={() => logoInputRef.current?.click()}><Upload className="h-4 w-4" />{logo ? "Change logo" : "Upload a logo"}</Btn>
-                  {logo && <Btn variant="ghost" onClick={() => setLogo(null)}><X className="h-4 w-4" />Remove</Btn>}
+                  <Btn variant="ghost" onClick={() => logoInputRef.current?.click()}><Upload className="h-4 w-4" aria-hidden="true" />{logo ? "Change logo" : "Upload a logo"}</Btn>
+                  {logo && <Btn variant="ghost" onClick={() => setLogo(null)}><X className="h-4 w-4" aria-hidden="true" />Remove</Btn>}
                   <input ref={logoInputRef} type="file" hidden accept="image/*"
                     onChange={async (e) => { const f = e.target.files?.[0]; if (f) setLogo(await loadImage(f)); e.target.value = ""; }} />
                 </div>
-                <p className="text-xs text-muted-foreground">Your logo sits in the middle on a clean patch. We automatically switch to the strongest error correction (H) so the code keeps scanning.</p>
+                <p className="text-xs text-[#4A4740]">Your logo sits in the middle on a clean patch. We automatically switch to the strongest error correction (H) so the code keeps scanning.</p>
               </div>
             )}
 
             {designTab === "level" && (
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {QR_LEVELS.map((l) => (
-                  <button key={l.id} onClick={() => setLevel(l.id)} disabled={!!logo}
-                    className={`rounded-xl border px-3 py-2.5 text-left transition disabled:opacity-50 ${level === l.id ? "border-primary bg-secondary shadow-soft" : "hover:border-lavender hover:bg-muted"}`}>
-                    <span className="block text-sm font-bold">{l.label}</span>
-                    <span className="block text-xs text-muted-foreground">{l.hint}</span>
+                  <button
+                    key={l.id}
+                    type="button"
+                    aria-pressed={level === l.id}
+                    onClick={() => setLevel(l.id)}
+                    disabled={!!logo}
+                    className={`cursor-pointer rounded-xl border px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] disabled:opacity-50 ${
+                      level === l.id
+                        ? "border-[#000000] bg-[#E8DFCA]/60"
+                        : "border-[#D6CCB5] bg-[#FAF7F0] hover:border-[#7895B2] hover:bg-[#FFFFFF]"
+                    }`}
+                  >
+                    <span className="block text-sm font-bold text-[#000000]">{l.label}</span>
+                    <span className="block text-xs text-[#4A4740]">{l.hint}</span>
                   </button>
                 ))}
-                {logo && <p className="col-span-full text-xs text-muted-foreground">Locked to H while a logo is placed — remove the logo to change it.</p>}
+                {logo && <p className="col-span-full text-xs text-[#4A4740]">Locked to H while a logo is placed — remove the logo to change it.</p>}
               </div>
             )}
           </div>
         </div>
 
         {/* step 3: download */}
-        <div className="grid content-start justify-items-center gap-4 rounded-3xl border bg-muted/50 p-6">
+        <div className="grid content-start justify-items-center gap-4 rounded-3xl border border-[#D6CCB5] bg-[#FAF7F0] p-6">
           <StepHead n={3} title="Download your QR" />
-          <div className="rounded-2xl bg-card p-4 shadow-elegant">
+          <div className="rounded-2xl border border-[#D6CCB5] bg-[#FFFFFF] p-4 shadow-sm">
             <canvas ref={canvasRef} className="w-56 rounded-lg" aria-label="QR code preview" />
           </div>
           <div className="flex flex-wrap justify-center gap-2">
             <DownloadBtn onClick={downloadPng}>PNG</DownloadBtn>
             <Btn variant="ghost" onClick={() => { if (plainSvg) void downloadSvg(); }} disabled={!plainSvg}>SVG</Btn>
           </div>
-          {!plainSvg && <p className="text-center text-xs text-muted-foreground">SVG export is available for the classic square style without a frame or logo.</p>}
-          <p className="text-center text-xs text-muted-foreground">Updates live as you type — scan it with your phone to test.</p>
-          <Btn variant="ghost" onClick={() => setMode("print")}><Printer className="h-4 w-4" />Print this design</Btn>
+          {!plainSvg && <p className="text-center text-xs text-[#4A4740]">SVG export is available for the classic square style without a frame or logo.</p>}
+          <p className="text-center text-xs text-[#4A4740]">Updates live as you type — scan it with your phone to test.</p>
+          <Btn variant="ghost" onClick={() => setMode("print")}><Printer className="h-4 w-4" aria-hidden="true" />Print this design</Btn>
         </div>
       </div>
       )}
@@ -601,14 +730,23 @@ export function FaviconGenerator() {
         sample={{ label: "Try a sample logo", busy: sampling, onPick: async () => { setSampling(true); setImg(await loadImage(await loadSample("logo"))); setSampling(false); } }} />
       {icons.length > 0 && (
         <>
-          <div className="flex items-center gap-3 rounded-t-xl border bg-muted px-3 py-2 text-sm">
-            <img src={icons[0]?.url} alt="" className="h-4 w-4" /><span className="font-medium">Your Site — Home</span><span className="ml-auto text-muted-foreground">tab preview</span>
+          <div className="flex items-center gap-3 rounded-t-xl border border-[#D6CCB5] bg-[#FAF7F0] px-3.5 py-2.5 text-sm">
+            <img src={icons[0]?.url} alt="" width={16} height={16} className="h-4 w-4 rounded-xs" />
+            <span className="font-medium text-[#000000]">Your Site — Home</span>
+            <span className="ml-auto text-xs text-[#4A4740]">tab preview</span>
           </div>
-          <div className="flex flex-wrap items-end gap-6">
+          <div className="flex flex-wrap items-end gap-6 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-5">
             {icons.map((i) => (
-              <div key={i.s} className="flex flex-col items-center gap-1">
-                <img src={i.url} alt="" style={{ width: Math.min(i.s, 96), height: Math.min(i.s, 96) }} className="shadow-soft" />
-                <span className="text-xs text-muted-foreground">{i.s}px</span>
+              <div key={i.s} className="flex flex-col items-center gap-1.5">
+                <img
+                  src={i.url}
+                  alt={`${i.s} by ${i.s} favicon`}
+                  width={Math.min(i.s, 96)}
+                  height={Math.min(i.s, 96)}
+                  style={{ width: Math.min(i.s, 96), height: Math.min(i.s, 96) }}
+                  className="shadow-xs"
+                />
+                <span className="text-xs tabular-nums text-[#4A4740]">{i.s}px</span>
               </div>
             ))}
           </div>
@@ -639,7 +777,7 @@ async function dummyPdf(title: string, pages: number, name: string) {
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
   for (let i = 1; i <= pages; i++) {
     const p = doc.addPage([595, 842]);
-    p.drawText(title, { x: 56, y: 762, size: 22, font: bold, color: rgb(0.3, 0.02, 0.52) });
+    p.drawText(title, { x: 56, y: 762, size: 22, font: bold, color: rgb(0, 0, 0) });
     p.drawText(`Page ${i} of ${pages}`, { x: 56, y: 726, size: 12, font, color: rgb(0.35, 0.35, 0.35) });
     p.drawText("A dummy document created in your browser so you can try this tool.", { x: 56, y: 690, size: 12, font });
     p.drawText("Marvedge Tools · marvedge.com", { x: 56, y: 60, size: 10, font, color: rgb(0.5, 0.5, 0.5) });
@@ -683,9 +821,21 @@ export function PdfTool() {
   };
   return (
     <Panel>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {(["merge", "split"] as const).map((m) => (
-          <button key={m} onClick={() => { setMode(m); setFiles([]); }} className={`rounded-full border px-4 py-2 text-sm font-bold capitalize ${mode === m ? "bg-gradient-primary text-primary-foreground" : "hover:bg-secondary"}`}>{m === "merge" ? "Merge PDFs" : "Split / extract pages"}</button>
+          <button
+            key={m}
+            type="button"
+            aria-pressed={mode === m}
+            onClick={() => { setMode(m); setFiles([]); }}
+            className={`cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+              mode === m
+                ? "border-[#000000] bg-[#000000] text-[#FFFFFF]"
+                : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-[#7895B2] hover:bg-[#FFFFFF] hover:text-[#000000]"
+            }`}
+          >
+            {m === "merge" ? "Merge PDFs" : "Split / extract pages"}
+          </button>
         ))}
       </div>
       <Dropzone accept="application/pdf" multiple={mode === "merge"} label={mode === "merge" ? "Drop PDFs to merge" : "Drop a PDF to split"} onFiles={add}
@@ -693,14 +843,38 @@ export function PdfTool() {
       {files.length > 0 && (
         <div className="grid gap-2">
           {files.map((f, i) => (
-            <div key={i} className="flex items-center gap-3 rounded-2xl border p-3 text-sm">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary font-bold text-primary">{i + 1}</span>
-              <span className="flex-1 font-semibold">{f.file.name}</span><span className="text-muted-foreground">{f.pages} pages</span>
+            <div key={`${f.file.name}-${i}`} className="flex items-center gap-3 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3 text-sm">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#000000] text-xs font-bold tabular-nums text-[#FFFFFF]">{i + 1}</span>
+              <span className="min-w-0 flex-1 truncate font-semibold text-[#000000]">{f.file.name}</span>
+              <span className="shrink-0 tabular-nums text-[#4A4740]">{f.pages} pages</span>
               {mode === "merge" && <>
-                <button disabled={i === 0} onClick={() => move(i, -1)} className="rounded p-1 hover:bg-secondary disabled:opacity-30"><ArrowUp className="h-4 w-4" /></button>
-                <button disabled={i === files.length - 1} onClick={() => move(i, 1)} className="rounded p-1 hover:bg-secondary disabled:opacity-30"><ArrowDown className="h-4 w-4" /></button>
+                <button
+                  type="button"
+                  aria-label={`Move ${f.file.name} up`}
+                  disabled={i === 0}
+                  onClick={() => move(i, -1)}
+                  className="cursor-pointer rounded-lg p-1.5 text-[#000000] transition-colors hover:bg-[#FFFFFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] disabled:pointer-events-none disabled:opacity-30"
+                >
+                  <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Move ${f.file.name} down`}
+                  disabled={i === files.length - 1}
+                  onClick={() => move(i, 1)}
+                  className="cursor-pointer rounded-lg p-1.5 text-[#000000] transition-colors hover:bg-[#FFFFFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] disabled:pointer-events-none disabled:opacity-30"
+                >
+                  <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                </button>
               </>}
-              <button onClick={() => setFiles((x) => x.filter((_, j) => j !== i))} className="rounded p-1 hover:bg-secondary"><X className="h-4 w-4" /></button>
+              <button
+                type="button"
+                aria-label={`Remove ${f.file.name}`}
+                onClick={() => setFiles((x) => x.filter((_, j) => j !== i))}
+                className="cursor-pointer rounded-lg p-1.5 text-[#000000] transition-colors hover:bg-[#FFFFFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
             </div>
           ))}
           {mode === "split" && <Field label="Pages to extract" hint="e.g. 1-3, 5, 8-10"><input className={inputCls} value={range} onChange={(e) => setRange(e.target.value)} /></Field>}

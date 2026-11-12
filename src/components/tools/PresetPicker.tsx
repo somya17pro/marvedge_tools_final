@@ -62,20 +62,20 @@ export function PresetPicker({
               type="button"
               aria-pressed={on}
               onClick={() => chooseGroup(g)}
-              className={`group grid gap-1 rounded-2xl border p-3 text-left transition-all duration-200 ${
+              className={`group grid cursor-pointer gap-1 rounded-2xl border p-3 text-left transition-[transform,background-color,border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
                 on
-                  ? "border-primary bg-secondary shadow-soft -translate-y-0.5"
-                  : "border-lavender hover:-translate-y-0.5 hover:bg-muted"
+                  ? "-translate-y-0.5 border-[#000000] bg-[#E8DFCA]/60 shadow-xs"
+                  : "border-[#D6CCB5] bg-[#FAF7F0] hover:-translate-y-0.5 hover:border-[#7895B2] hover:bg-[#FFFFFF]"
               }`}
             >
-              <span className={`flex h-11 items-center justify-center transition-colors ${on ? "text-primary" : "text-primary/55 group-hover:text-primary"}`}>
+              <span className={`flex h-11 items-center justify-center transition-colors ${on ? "text-[#000000]" : "text-[#4A4740] group-hover:text-[#000000]"}`}>
                 <GroupMark group={g} />
               </span>
-              <span className="flex items-center gap-1 text-sm font-bold leading-tight">
+              <span className="flex items-center gap-1 text-sm font-bold leading-tight text-[#000000]">
                 {g.flag && <span aria-hidden="true">{g.flag}</span>}
                 {g.name}
               </span>
-              <span className="text-xs leading-snug text-muted-foreground">
+              <span className="text-xs leading-snug tabular-nums text-[#4A4740]">
                 {count} sizes · {g.blurb}
               </span>
             </button>
@@ -83,7 +83,7 @@ export function PresetPicker({
         })}
       </div>
 
-      <div className="grid gap-3 rounded-2xl border border-lavender bg-muted/40 p-3 sm:p-4">
+      <div className="grid gap-3 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3 sm:p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap gap-1.5">
             {group.categories.length > 1 &&
@@ -93,15 +93,17 @@ export function PresetPicker({
                   type="button"
                   aria-pressed={i === cat}
                   onClick={() => setCatIndex(i)}
-                  className={`rounded-full px-3 py-1 text-xs font-bold transition-colors ${
-                    i === cat ? "bg-gradient-primary text-primary-foreground" : "border border-lavender bg-background hover:bg-secondary"
+                  className={`cursor-pointer rounded-full px-3 py-1 text-xs font-semibold tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                    i === cat
+                      ? "bg-[#000000] text-[#FFFFFF]"
+                      : "border border-[#D6CCB5] bg-[#FFFFFF] text-[#4A4740] hover:border-[#7895B2] hover:text-[#000000]"
                   }`}
                 >
                   {c.name} · {c.items.length}
                 </button>
               ))}
           </div>
-          <p className="text-xs font-semibold text-primary">
+          <p className="text-xs font-semibold tabular-nums text-[#4A4740]">
             {group.name} — {active.name.toLowerCase()} {active.items.length}
           </p>
         </div>
@@ -116,20 +118,22 @@ export function PresetPicker({
                 aria-pressed={on}
                 onClick={() => onPick(p)}
                 style={{ animationDelay: `${Math.min(i, 9) * 40}ms` }}
-                className={`preset-in rounded-xl border p-3 text-left transition-all duration-200 hover:-translate-y-0.5 ${
-                  on ? "border-primary bg-secondary shadow-soft" : "border-lavender bg-background hover:bg-secondary/60"
+                className={`preset-in cursor-pointer rounded-xl border p-3 text-left transition-[transform,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${
+                  on
+                    ? "border-[#000000] bg-[#E8DFCA]/60 shadow-xs"
+                    : "border-[#D6CCB5] bg-[#FFFFFF] hover:border-[#7895B2]"
                 }`}
               >
                 <span className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-bold">{p.title}</span>
-                  {on && <Check className="h-4 w-4 shrink-0 text-primary" />}
+                  <span className="text-sm font-bold text-[#000000]">{p.title}</span>
+                  {on && <Check className="h-4 w-4 shrink-0 text-[#000000]" aria-hidden="true" />}
                 </span>
-                <span className="mt-0.5 block text-xs text-muted-foreground">
+                <span className="mt-0.5 block text-xs tabular-nums text-[#4A4740]">
                   {p.w}×{p.h} px{p.mm ? ` · ${p.mm}` : ""}
                 </span>
-                {p.note && <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">{p.note}</span>}
+                {p.note && <span className="mt-0.5 block text-[11px] leading-snug text-[#4A4740]">{p.note}</span>}
                 {p.kb != null && (
-                  <span className="mt-2 inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">
+                  <span className="mt-2 inline-block rounded-full border border-[#D6CCB5] bg-[#FAF7F0] px-2 py-0.5 text-[11px] font-semibold tabular-nums text-[#000000]">
                     ≤ {fmtKB(p.kb)}
                   </span>
                 )}
